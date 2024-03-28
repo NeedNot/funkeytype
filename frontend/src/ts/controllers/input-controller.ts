@@ -448,6 +448,32 @@ function isCharCorrect(char: string, charIndex: number): boolean {
   return false;
 }
 
+const chars = "qwertyuiopasdfghjkl;zxcvbnm,.";
+
+function getRandomNeighboringKey(char: string): string {
+  function colOf(c: string): number {
+    return chars.indexOf(c) % 10;
+  }
+
+  function rowOf(c: string): number {
+    return Math.floor(chars.indexOf(c) / 10);
+  }
+
+  function distance(c1: string, c2: string): number {
+    return Math.sqrt(
+      Math.pow(colOf(c2) - colOf(c1), 2) + Math.pow(rowOf(c2) - rowOf(c1), 2)
+    );
+  }
+
+  const result = [];
+  for (const c of chars) {
+    if (c !== char && distance(c, char) < 2) {
+      result.push(c);
+    }
+  }
+  return result[Math.floor(Math.random() * result.length)] ?? char;
+}
+
 function handleChar(
   char: string,
   charIndex: number,
@@ -455,6 +481,10 @@ function handleChar(
 ): void {
   if (TestUI.resultCalculating || TestUI.resultVisible) {
     return;
+  }
+
+  if (char && chars.includes(char) && Math.random() < 0.05) {
+    char = getRandomNeighboringKey(char);
   }
 
   console.debug("Handling char", char, charIndex, realInputValue);
